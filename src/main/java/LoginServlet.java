@@ -4,6 +4,7 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
@@ -12,7 +13,14 @@ import java.util.Map;
 public class LoginServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
+
         ServletContext servletContext = getServletContext();
+
+        // henter session scopet
+        HttpSession session = request.getSession();
+
+
+
 
         String navn = request.getParameter("navn");
         String kodeord = request.getParameter("kodeord");
@@ -50,13 +58,11 @@ public class LoginServlet extends HttpServlet {
                 request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request,response);
             }
 
+            session.setAttribute("besked", "du logget ind med brugernavnet #" + navn);
             request.getRequestDispatcher("WEB-INF/HuskeListe.jsp").forward(request, response);
 
         }
-
-
-        // forkert kode
-        // todo gå til login side dvs index siden.
+        // hvis koden er forkert
             request.setAttribute("besked", "din kode var forkert, prøv igen");
             request.getRequestDispatcher("index.jsp").forward(request, response);
 
