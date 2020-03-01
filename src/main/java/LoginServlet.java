@@ -24,17 +24,19 @@ public class LoginServlet extends HttpServlet {
             Map<String, String> brugerMap = new HashMap<>();
 
             brugerMap.put("test","test");
+            brugerMap.put("admin","1234");
 
             servletContext.setAttribute("brugerMap", brugerMap);
 
         }
 
-        // hvis brugernavnet ikke findes
+
+            // hvis brugernavnet ikke findes
         if (!((Map<String, String>) servletContext.getAttribute("brugerMap")).containsKey(navn)) {
 
             //todo gå til login side
-            request.setAttribute("besked", "brugernavnet findes ikke");
-            request.getRequestDispatcher("index.jsp").forward(request, response);
+            request.setAttribute("besked", "Opret dig som bruger");
+            request.getRequestDispatcher("WEB-INF/OpretBruger.jsp").forward(request, response);
 
 
         }
@@ -43,7 +45,11 @@ public class LoginServlet extends HttpServlet {
         // hvis det er rigtig kode goto huskeliste
         if (((Map<String, String>) servletContext.getAttribute("brugerMap")).get(navn).equalsIgnoreCase(kodeord)) {
 
-            // todo gå til huskelisten
+            //hvis brugernavn er admin og kode er rigtig
+            if (navn.equalsIgnoreCase("admin")){
+                request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request,response);
+            }
+
             request.getRequestDispatcher("WEB-INF/HuskeListe.jsp").forward(request, response);
 
         }
