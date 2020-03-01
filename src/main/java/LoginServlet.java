@@ -27,7 +27,7 @@ public class LoginServlet extends HttpServlet {
         String navn = request.getParameter("navn");
         String kodeord = request.getParameter("kodeord");
 
-        // hvis bruger map er tomt så er det den første bruger
+        // Opret brugerMap til tilføjelse af nye brugere
         if (servletContext.getAttribute("brugerMap") == null) {
 
 
@@ -40,6 +40,7 @@ public class LoginServlet extends HttpServlet {
 
         }
 
+        // Opret aktiveBrugere et set som indeholder brugere der er aktive på session
         if( ( (Set<String>) servletContext.getAttribute("aktiveBrugere")) == null ){
 
             Set<String> aktiveBrugere = new HashSet<>();
@@ -49,10 +50,15 @@ public class LoginServlet extends HttpServlet {
         }
 
 
+        // hvis man allerede er logget ind på en session så bare tryk på login og kom til huskeliste side
+        if(!(session.getAttribute("besked") == null ) ) {
+            request.getRequestDispatcher("WEB-INF/HuskeListe.jsp").forward(request,response);
+        }
 
 
 
-            // hvis brugernavnet ikke findes
+
+            // hvis bruger ikke findes så goto OpretBruger side
         if (!((Map<String, String>) servletContext.getAttribute("brugerMap")).containsKey(navn)) {
 
             //todo gå til login side
@@ -63,19 +69,21 @@ public class LoginServlet extends HttpServlet {
         }
 
 
-        // hvis det er rigtig kode goto huskeliste
+        // Hvis brugernavn og kode er korrekt så goto
         if (((Map<String, String>) servletContext.getAttribute("brugerMap")).get(navn).equalsIgnoreCase(kodeord)) {
 
-            //hvis brugernavn er admin og kode er rigtig
+            //hvis brugernavn er admin og kode er rigtig goto Admin side
             if (navn.equalsIgnoreCase("admin")){
                 request.getRequestDispatcher("WEB-INF/admin.jsp").forward(request,response);
             }
 
+            // hvis navn ikke allerede er i aktiveBrugere så tilføj til aktiveBrugere
             if( !( (Set<String>) servletContext.getAttribute("aktiveBrugere")).contains(navn)){
 
                 ((Set<String>) servletContext.getAttribute("aktiveBrugere")).add(navn);
 
                 session.setAttribute("besked", "du logget ind med brugernavnet #" + navn);
+                session.setAttribute("navn", navn);
                 request.getRequestDispatcher("WEB-INF/HuskeListe.jsp").forward(request, response);
 
             }

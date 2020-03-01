@@ -16,6 +16,7 @@ public class OpretServlet extends HttpServlet {
         String navn = request.getParameter("navn");
         String kodeord = request.getParameter("kodeord");
 
+        // hvis navn allerede eksisterer i brugerMap
         if ( ( (Map<String, String>) servletContext.getAttribute("brugerMap")).containsKey(navn)) {
 
             request.setAttribute("besked", "Brugernavnet findes allerede");
@@ -23,6 +24,7 @@ public class OpretServlet extends HttpServlet {
 
         }
 
+        // Tilføjer ny bruger til brugerMap og returner til index side
         ( (Map<String, String>) servletContext.getAttribute("brugerMap")).put(navn,kodeord);
 
         request.setAttribute("besked", "Du er oprettet og klar til at login");
